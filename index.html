@@ -1,0 +1,151 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Перцептрон для XOR</title>
+    <script type="text/javascript" src="node_modules/chart.js/dist/Chart.js"></script>
+    <link rel="stylesheet" type="text/css" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
+     <style>
+   .leftimg {
+    float:left; /* Выравнивание по левому краю */
+    margin: 7px 7px 7px 0; /* Отступы вокруг картинки */
+   }
+   .rightimg  {
+    float: left;; /* Выравнивание по правому краю  */ 
+    margin: 7px 50px 7px 7px;
+     padding-top: 75px;  /* Отступы вокруг картинки */
+   }
+   .postcard {
+    float:left; /* Выравнивание по левому краю */
+    margin: 7px 7px 7px 0; /* Отступы вокруг картинки */
+  max-width: 350px;
+  margin: 50px auto 0;
+  padding: 20px;
+  background: #fffdee;
+  border: 10px solid transparent;
+  border-image: 10 repeating-linear-gradient(135deg, #C42061, #C42061 10px, transparent 10px, transparent 20px, #FBCFDF 20px, #FBCFDF 30px,transparent 30px, transparent 40px);
+  font-family: 'Playfair Display';
+  color: #605756;
+}
+  </style>
+  </head>
+  <body>
+    <h1>Обучение перцептрона для решения XOR</h1>
+   <form name="napomni" class="postcard">
+    <div class="form-row">
+      <label for="usr">A:</label><br>
+      <input type="text" class="form-control"  id="x1" onkeyup="awww();">
+    </div>
+
+    <div class="form-row">
+      <label for="pwd">B:</label><br>
+      <input type="text" class="form-control"id="x2" onkeyup="awww();">
+      </div>
+
+<div class="form-row">
+      <label for="pwd">Количество эпох:</label><br>
+      <input type="text" class="form-control"  id="ages" onkeyup="awww();">
+      </div>
+      <div>
+      <label for="pwd">Скорость обучения:</label><br>
+      <input type="text" class="form-control" id="speed" onkeyup="awww();">
+      </div>
+<!--<button onClick="awww();">Начать обучение</button>-->
+      </form><br>
+<img src="bg.jpeg"  width="600" height="250" 
+    class="leftimg">
+<h1> <div id="min" class="rightimg"></div> </h1>    
+<canvas id="myChart" width="400" height="100"></canvas>
+
+<script type="text/javascript">
+function awww() {
+x1 = document.getElementById('x1').value;
+x2 = document.getElementById('x2').value;
+ages = document.getElementById('ages').value;
+speed = document.getElementById('speed').value;
+
+
+      var nodeConsole = require('console');
+var myConsole = new nodeConsole.Console(process.stdout, process.stderr);
+
+var myArray=[];
+var myArray2=[];
+const synaptic = require('synaptic')
+const Layer = synaptic.Layer
+const Network = synaptic.Network
+
+var inputLayer = new Layer(2);
+var hiddenLayer = new Layer(3);
+var outputLayer = new Layer(1);
+
+inputLayer.project(hiddenLayer);
+hiddenLayer.project(outputLayer);
+
+var myNetwork = new Network({
+  input: inputLayer,
+  hidden: [hiddenLayer],
+  output: outputLayer
+});
+
+
+var learningRate = this.speed;
+for (var i = 0; i < this.ages; i++)
+{
+
+  // 0,0 => 0
+  myNetwork.activate([0,0]);
+  myNetwork.propagate(learningRate, [0]);
+
+  // 0,1 => 1
+  myNetwork.activate([0,1]);
+  myNetwork.propagate(learningRate, [1]);
+
+  // 1,0 => 1
+  myNetwork.activate([1,0]);
+  myNetwork.propagate(learningRate, [1]);
+
+  // 1,1 => 0
+  myNetwork.activate([1,1]);
+  myNetwork.propagate(learningRate, [0]);
+
+     
+
+  myArray[myArray.length] = myNetwork.activate([this.x1,this.x2]); 
+        myArray2[myArray2.length] = i;
+     
+      myConsole.log(
+ myNetwork.activate([this.x1,this.x2]));
+
+}
+
+  
+var ctx = document.getElementById('myChart').getContext('2d');
+let chart = new Chart(ctx, {
+    type: 'line',
+    data: {
+        datasets: [{
+            label: 'График обучения',
+            data: myArray
+        }],
+        labels: myArray2
+    },
+    options: {
+        scales: {
+            yAxes: [{
+                ticks: {
+                    suggestedMin: 0,
+                    suggestedMax: 1
+                }
+            }]
+        }
+    }
+});
+   var min = myNetwork.activate([this.x1,this.x2]);
+    document.getElementById("min").innerHTML = min;
+}
+
+
+
+</script>
+  </body>
+</html>
